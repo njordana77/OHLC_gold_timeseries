@@ -7,9 +7,8 @@ Chart Type: OHLC (Open-High-Low-Close) Chart
 
 Libraries Used:
 
-    Plotly (https://plot.ly) for interactive charting
-
-    D3.js (https://d3js.org/) for CSV file parsing
+- Plotly (https://plot.ly) for interactive charting
+- D3.js (https://d3js.org/) for CSV file parsing
 
 Data Source:
 
