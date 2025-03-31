@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>OHLC Chart Example</title>
+    <!-- Import Plotly via CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Import d3.js via CDN for CSV parsing -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+  </head>
+  <body>
+    <!-- Container for the OHLC chart -->
+    <div id="ohlc-chart" style="width:100%;height:500px;"></div>
+    <script>
+      // Load the CSV file (ensure that "gold_usd_price.csv" is in the same directory)
+      d3.csv("data/gold_usd_price.csv").then(function(data) {
+        // Adjust each date to set the time to 9:30 AM ET (market open)
+        var dates = data.map(function(d) {
+          var dt = new Date(d.Date);
+          dt.setHours(12, 0, 0, 0);  // set to 12:00 ET
+          return dt;
+        });
+        var opens = data.map(function(d) { return parseFloat(d.Open); });
+        var highs = data.map(function(d) { return parseFloat(d.High); });
+        var lows  = data.map(function(d) { return parseFloat(d.Low); });
+        var closes = data.map(function(d) { return parseFloat(d.Close); });
+
+        // Create the OHLC trace with a custom hover template indicating open and close times.
+        var trace = {
+          x: dates,
+          open: opens,
+          high: highs,
+          low: lows,
+          close: closes,
+          type: 'ohlc',
+          increasing: { line: { color: 'grey' } },
+          decreasing: { line: { color: 'red' } },
+          hovertemplate:
+            'Date: %{x}<br>' +
+            'Open (9:30 ET): %{open}<br>' +
+            'High: %{high}<br>' +
+            'Low: %{low}<br>' +
+            'Close (4:00 ET): %{close}<br>' +
+            '<extra></extra>'
+        };
+
+        var layout = {
+          title: 'Gold Daily Prices (OHLC Chart)',
+          xaxis: {
+            title: 'Date (ET)',
+            color: 'black',
+            tickfont: { color: 'black' },
+            titlefont: { color: 'black' },
+            showline: true,
+            linecolor: 'black',
+            linewidth: 2
+          },
+          yaxis: {
+            title: 'Price / ounce (USD)',
+            fixedrange: false,
+            rangemode: 'tozero',
+            color: 'black',
+            tickfont: { color: 'black' },
+            titlefont: { color: 'black' },
+            showline: true,
+            linecolor: 'black',
+            linewidth: 2
+          }
+        };
+
+        // Enable scroll zoom (this allows zooming on the y-axis as well as the x-axis)
+        var config = {
+          scrollZoom: true
+        };
+
+        // Render the chart with the new config
+        Plotly.newPlot('ohlc-chart', [trace], layout, config);
+      }).catch(function(error){
+        console.error("Error loading CSV file:", error);
+      });
+    </script>
+  </body>
+</html>
